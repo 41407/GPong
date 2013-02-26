@@ -22,9 +22,11 @@ public class Gameplay {
     private int player1score = 0;
     private int player2score = 0;
     private PongFrame frame;
+    private HashSet<Ball> ballsToAdd;
 
     public Gameplay(int x, int y) {
         this.balls = new HashSet();
+        this.ballsToAdd = new HashSet();
         this.stage = new Stage(x, y);
         this.leftPaddle = new Paddle(50, (int) y / 2, 8, 150);
         this.rightPaddle = new Paddle(x - 50, (int) y / 2, 8, 150);
@@ -32,27 +34,38 @@ public class Gameplay {
     }
 
     public void loop() {
+        Random r = new Random();
         while (true) {
+            player1score = balls.size();
             if (balls.isEmpty()) {
-                int xSpeed = 2;
-                int ySpeed = 2;
-                addABall(stage.getHeight() / 2, stage.getHeight() / 2, xSpeed, ySpeed);
+                double xSpeed = 5 * Math.pow(-1, r.nextInt(2));
+                double ySpeed = 2 * Math.pow(-1, r.nextInt(2));
+                addABall(stage.getHeight() / 2, stage.getHeight() / 2, xSpeed, ySpeed, false);
             }
+            addBalls();
 
             for (Iterator<Ball> it = balls.iterator(); it.hasNext();) {
                 Ball b = it.next();
                 double x = b.update(stage);
-                if (x < leftPaddle.getX()) {
+                if (x < leftPaddle.getX() + leftPaddle.getWidth()) {
                     if (x < 0) {
                         it.remove();
                     } else if (b.xCollide(leftPaddle)) {
-          //              addABall(b.getX(), b.getY(), b.getxSpeed(), b.getySpeed());
+                        addABall(leftPaddle.getX()+10,
+                                b.getY(),
+                                Math.abs(b.getxSpeed()),
+                                b.getySpeed(),
+                                true);
                     }
-                } else if (x > rightPaddle.getX()) {
+                } else if (x > rightPaddle.getX() - rightPaddle.getWidth()) {
                     if (x > stage.getWidth()) {
                         it.remove();
                     } else if (b.xCollide(rightPaddle)) {
-           //             addABall(b.getX(), b.getY(), b.getxSpeed(), b.getySpeed());
+                        addABall(rightPaddle.getX()-10,
+                                b.getY(),
+                                -Math.abs(b.getxSpeed()),
+                                b.getySpeed(),
+                                true);
                     }
                 }
             }
@@ -99,15 +112,26 @@ public class Gameplay {
         return frame;
     }
 
-    private void addABall(double x, double y, double xSpeed, double ySpeed) {
-        Random random = new Random();
-        ySpeed += random.nextInt(3)-1;
-        ySpeed += random.nextInt(3)-1;
+    private void addABall(double x, double y, double xSpeed, double ySpeed, boolean random) {
+        Random r = new Random();
+        if (random) {
+            ySpeed *= r.nextDouble() + 0.5;
+            xSpeed *= r.nextDouble() + 0.5;
+        }
         Ball b = new Ball(x, y, xSpeed, ySpeed, calculateSize());
-        balls.add(b);
+        ballsToAdd.add(b);
+    }
+
+    private void addBalls() {
+        if (!ballsToAdd.isEmpty()) {
+            for (Ball b : ballsToAdd) {
+                balls.add(b);
+            }
+        }
+        ballsToAdd.clear();
     }
 
     private double calculateSize() {
-        return 10;
+        return Math.max(1, 50-(balls.size()/100));
     }
 }

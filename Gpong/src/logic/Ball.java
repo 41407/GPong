@@ -43,6 +43,13 @@ public class Ball {
         this.x += this.xSpeed;
         this.y += this.ySpeed;
 
+        if(xSpeed > 60) {
+            xSpeed--;
+        }
+        if(ySpeed > 20) {
+            ySpeed--;
+        }
+        
         return x;
     }
 
@@ -64,11 +71,21 @@ public class Ball {
      * @return true if ball hits the paddle
      */
     public boolean xCollide(Paddle p) {
-        if (this.y > p.getY() && this.y < p.getY() + p.getHeight()) {
-            this.xSpeed *= -1;
-            return true;
-        } else {
-            return false;
+        /**
+         * Temporary variable for the direction of the ball
+         */
+        int d = -1;
+        if (xSpeed > 0) {
+            d = 1;
         }
+
+        if (this.y > p.getY() && this.y < p.getY() + p.getHeight()) {
+            if (this.x < p.getX() + 1) {
+                this.xSpeed *= -1;
+                this.x = p.getX() - 10*d;
+                return true;
+            }
+        }
+        return false;
     }
 }

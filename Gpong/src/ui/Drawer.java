@@ -6,6 +6,7 @@ package ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import logic.Ball;
 import logic.Paddle;
@@ -36,8 +37,12 @@ public class Drawer {
     }
 
     public void drawBalls(HashSet<Ball> balls, Graphics g) {
-        for (Ball b : balls) {
-            drawBall(b, g);
+        
+        try {
+            for (Ball b : balls) {
+                drawBall(b, g);
+            }
+        } catch (ConcurrentModificationException e) {
         }
     }
 
@@ -47,7 +52,9 @@ public class Drawer {
         int visualX = (int) ((int) b.getX() / scale);
         int visualY = (int) ((int) b.getY() / scale);
         int visualSize = (int) ((int) b.getSize() / scale);
-
+        
+        visualX -= visualSize/2;
+        
         g.fillRect(visualX, visualY, visualSize, visualSize);
     }
 
