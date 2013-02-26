@@ -18,9 +18,11 @@ import logic.Paddle;
 public class Drawer {
 
     private Camera c;
-
+    private double scale;
+    
     public Drawer(Camera c) {
         this.c = c;
+        this.scale = c.getScale();
     }
 
     public void drawPaddle(Paddle p, Graphics g) {
@@ -31,13 +33,13 @@ public class Drawer {
         int visualWidth = (int) ((int) p.getWidth() / scale);
         int visualHeight = (int) ((int) p.getHeight() / scale);
 
-        visualX -= visualWidth / 2;
+//        visualX -= visualWidth / 2;
 
         g.fillRect(visualX, visualY, visualWidth, visualHeight);
     }
 
     public void drawBalls(HashSet<Ball> balls, Graphics g) {
-        
+
         try {
             for (Ball b : balls) {
                 drawBall(b, g);
@@ -47,14 +49,15 @@ public class Drawer {
     }
 
     public void drawBall(Ball b, Graphics g) {
-        double scale = c.getScale();
-
+  
+        g.setColor(b.getColor());
         int visualX = (int) ((int) b.getX() / scale);
         int visualY = (int) ((int) b.getY() / scale);
         int visualSize = (int) ((int) b.getSize() / scale);
-        
-        visualX -= visualSize/2;
-        
+
+        visualX -= visualSize / 2;
+        visualY -= visualSize / 2;
+
         g.fillRect(visualX, visualY, visualSize, visualSize);
     }
 

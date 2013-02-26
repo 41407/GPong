@@ -4,6 +4,8 @@
  */
 package logic;
 
+import java.awt.Color;
+
 /**
  *
  * @author lassi
@@ -15,6 +17,7 @@ public class Ball {
     private double y;
     private double ySpeed;
     private double size;
+    private Color color;
 
     public Ball(double x, double y, double xSpeed, double ySpeed, double size) {
         this.x = x;
@@ -22,6 +25,12 @@ public class Ball {
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.size = size;
+        this.color = new Color(Color.HSBtoRGB((float) (System.currentTimeMillis() % 4000) / 4000,
+                1, (float) 1.0));
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public double getX() {
@@ -43,13 +52,13 @@ public class Ball {
         this.x += this.xSpeed;
         this.y += this.ySpeed;
 
-        if(xSpeed > 60) {
+        if (xSpeed > 20) {
             xSpeed--;
         }
-        if(ySpeed > 20) {
+        if (ySpeed > 1) {
             ySpeed--;
         }
-        
+
         return x;
     }
 
@@ -79,10 +88,14 @@ public class Ball {
             d = 1;
         }
 
-        if (this.y > p.getY() && this.y < p.getY() + p.getHeight()) {
-            if (this.x < p.getX() + 1) {
+        if (this.y >= p.getY() && this.y <= p.getY() + p.getHeight()) {
+            if (this.x > p.getX() && this.x < p.getX() + p.getWidth()) {
                 this.xSpeed *= -1;
-                this.x = p.getX() - 10*d;
+                if (d == 1) {
+                    this.x = p.getX() - 10 * d;
+                } else {
+                    this.x = p.getX() + p.getWidth() + 10;
+                }
                 return true;
             }
         }
